@@ -1,6 +1,7 @@
 import {
   createContext,
   useCallback,
+  useContext,
   useEffect,
   useState,
 } from 'react';
@@ -96,4 +97,16 @@ const AuthProvider = ({
   );
 };
 
-export { AuthContext, AuthProvider };
+const useAuth = () => {
+  const auth = useContext(AuthContext);
+
+  if (!auth) {
+    throw new Error(
+      'useAuth should be used within <AuthProvider>'
+    );
+  }
+
+  return auth;
+};
+
+export { AuthProvider, useAuth };

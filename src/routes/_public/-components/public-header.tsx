@@ -1,5 +1,5 @@
 import { Link } from '@tanstack/react-router';
-import { Button, Logo } from '../../../components/ui';
+import { Button, Logo } from '@/components/ui';
 
 import { useAuth } from '@/hooks/use-auth';
 
@@ -18,15 +18,9 @@ const Actions = () => {
 
   if (isAuthenticated) {
     return (
-      <div className='space-x-4'>
-        <Button
-          variant='outline'
-          effect='ringHover'
-          asChild
-        >
-          <Link to='/dashboard'>Dashboard</Link>
-        </Button>
-      </div>
+      <Button variant='outline' effect='ringHover' asChild>
+        <Link to='/dashboard'>Dashboard</Link>
+      </Button>
     );
   }
   return (

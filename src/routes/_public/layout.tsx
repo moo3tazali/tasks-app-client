@@ -17,7 +17,6 @@ function PublicLayout() {
         <main>
           <Outlet />
         </main>
-        {/* <PublicFooter /> */}
       </div>
     </div>
   );

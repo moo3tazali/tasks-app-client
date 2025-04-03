@@ -5,6 +5,7 @@ import {
 } from '@tanstack/react-router';
 
 import { Auth } from '@/services/auth';
+import { DashboardHeader } from './-components/dashboard-header';
 
 export const Route = createFileRoute('/dashboard')({
   component: DashboardLayout,
@@ -24,12 +25,11 @@ export const Route = createFileRoute('/dashboard')({
 
 function DashboardLayout() {
   return (
-    <div>
-      <header>Header</header>
+    <div className='h-full bg-gray-100'>
+      <DashboardHeader />
       <main>
         <Outlet />
       </main>
-      <footer>Footer</footer>
     </div>
   );
 }

@@ -1,4 +1,9 @@
-import { createContext, useEffect, useState } from 'react';
+import {
+  createContext,
+  useCallback,
+  useEffect,
+  useState,
+} from 'react';
 
 import {
   Auth,
@@ -25,7 +30,7 @@ const AuthProvider = ({
 
   const navigate = useNavigate();
 
-  const clear = () => {
+  const clear = useCallback(() => {
     const currentPathname = pathname;
     const isDashboardRoute =
       currentPathname.startsWith('/dashboard');
@@ -41,19 +46,22 @@ const AuthProvider = ({
         },
       });
     }
-  };
+  }, [pathname, navigate]);
 
-  const set = async (token: string, cb?: () => void) => {
-    await Auth.setToken(token);
+  const set = useCallback(
+    async (token: string, cb?: () => void) => {
+      await Auth.setToken(token);
 
-    const user = await Auth.getUser();
+      const user = await Auth.getUser();
 
-    setAuth(user);
+      setAuth(user);
 
-    if (cb) {
-      cb();
-    }
-  };
+      if (cb) {
+        cb();
+      }
+    },
+    []
+  );
 
   useEffect(() => {
     const checkAuth = async () => {

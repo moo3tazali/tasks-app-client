@@ -1,9 +1,15 @@
 import { z } from 'zod';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
+import {
+  useNavigate,
+  useSearch,
+  useRouter,
+} from '@tanstack/react-router';
 
-import { Auth } from '@/api/auth';
+import { Auth } from '@/services/auth';
 import { useMutation } from '@/hooks/use-mutation';
+import { useAuth } from '@/hooks/use-auth';
 
 const formSchema = z.object({
   identifier: z
@@ -23,14 +29,33 @@ export const useLogin = () => {
     },
   });
 
+  const { set } = useAuth();
+
+  const navigate = useNavigate();
+
+  const router = useRouter();
+
+  const redirect = useSearch({
+    strict: false,
+    select: (s: { redirect?: string }) => s?.redirect ?? '',
+  });
+
   const { mutate: login, isPending } = useMutation({
     operationName: 'login',
     mutationFn: Auth.login,
     formControl: form.control,
-    onSuccess: (res) => {
+    onSuccess: async (res) => {
       const accessToken = res.data.accessToken;
+      set(accessToken, () => {
+        if (redirect) {
+          return router.history.push(redirect);
+        }
 
-      console.log(accessToken);
+        navigate({
+          to: '/dashboard',
+          replace: true,
+        });
+      });
     },
   });
 

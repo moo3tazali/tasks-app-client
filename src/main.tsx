@@ -1,34 +1,12 @@
-import { StrictMode } from 'react';
-import ReactDOM from 'react-dom/client';
-import {
-  RouterProvider,
-  createRouter,
-} from '@tanstack/react-router';
-import {
-  QueryClient,
-  QueryClientProvider,
-} from '@tanstack/react-query';
-import { Toaster } from 'react-hot-toast';
-
-// Import the generated route tree
-import { routeTree } from './routeTree.gen';
-
 // Import CSS
 import 'unfonts.css';
 import './index.css';
 
-// Create a new router instance
-const router = createRouter({ routeTree });
+import ReactDOM from 'react-dom/client';
+import { StrictMode } from 'react';
+import { RouterProvider } from '@tanstack/react-router';
 
-// Register the router instance for type safety
-declare module '@tanstack/react-router' {
-  interface Register {
-    router: typeof router;
-  }
-}
-
-// Create a client
-const queryClient = new QueryClient();
+import { router } from './router';
 
 // Render the app
 const rootElement = document.getElementById('root')!;
@@ -36,10 +14,7 @@ if (!rootElement.innerHTML) {
   const root = ReactDOM.createRoot(rootElement);
   root.render(
     <StrictMode>
-      <QueryClientProvider client={queryClient}>
-        <RouterProvider router={router} />
-        <Toaster />
-      </QueryClientProvider>
+      <RouterProvider router={router} />
     </StrictMode>
   );
 }

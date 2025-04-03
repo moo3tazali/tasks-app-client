@@ -1,4 +1,4 @@
-import { Logo } from '../ui';
+import { Logo } from '@/components/ui';
 
 export const AuthHeader = () => {
   return (

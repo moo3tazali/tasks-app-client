@@ -16,8 +16,9 @@ import {
   FormLabel,
   FormMessage,
   PasswordInput,
+  FormErrorMessage,
 } from '@/components/ui';
-import { useLogin } from './_hooks/use-login';
+import { useLogin } from '../-hooks/use-login';
 
 export function LoginForm({
   className,
@@ -55,8 +56,9 @@ export function LoginForm({
                     <FormLabel>Identifier</FormLabel>
                     <FormControl>
                       <Input
-                        placeholder='exampleUser | user@example.com'
                         {...field}
+                        placeholder='exampleUser | user@example.com'
+                        disabled={form.isPending}
                       />
                     </FormControl>
 
@@ -74,10 +76,10 @@ export function LoginForm({
                       <FormLabel>Password</FormLabel>
                       <Button
                         variant='link'
-                        effect='hoverUnderline'
                         asChild
                         className='p-0 text-sm m-0 h-auto'
                         type='button'
+                        disabled={form.isPending}
                       >
                         <a href='#'>
                           Forgot your password?
@@ -86,8 +88,9 @@ export function LoginForm({
                     </div>
                     <FormControl>
                       <PasswordInput
-                        placeholder='********'
                         {...field}
+                        placeholder='********'
+                        disabled={form.isPending}
                       />
                     </FormControl>
 
@@ -96,7 +99,15 @@ export function LoginForm({
                 )}
               />
 
-              <Button type='submit' className='w-full'>
+              <FormErrorMessage>
+                {form.formState.errors.root?.message}
+              </FormErrorMessage>
+
+              <Button
+                type='submit'
+                className='w-full'
+                disabled={form.isPending}
+              >
                 Login
               </Button>
             </form>
@@ -105,11 +116,11 @@ export function LoginForm({
           <div className='mt-4 text-center text-sm'>
             Don&apos;t have an account?{' '}
             <Button
-              variant={'link'}
-              effect={'hoverUnderline'}
+              variant='link'
               asChild
               className='p-0 text-sm h-auto'
               type='button'
+              disabled={form.isPending}
             >
               <Link to='/register'>Sign up</Link>
             </Button>

@@ -11,68 +11,68 @@
 // Import Routes
 
 import { Route as rootRoute } from './routes/__root'
-import { Route as DashboardRouteImport } from './routes/dashboard/route'
-import { Route as PublicRouteImport } from './routes/_public/route'
-import { Route as AuthRouteImport } from './routes/_auth/route'
-import { Route as DashboardSettingsIndexImport } from './routes/dashboard/settings/index'
-import { Route as DashboardhomeIndexImport } from './routes/dashboard/(home)/index'
-import { Route as PublicAboutIndexImport } from './routes/_public/about/index'
-import { Route as PublichomeIndexImport } from './routes/_public/(home)/index'
-import { Route as AuthRegisterIndexImport } from './routes/_auth/register/index'
-import { Route as AuthLoginIndexImport } from './routes/_auth/login/index'
+import { Route as DashboardLayoutImport } from './routes/dashboard/layout'
+import { Route as PublicLayoutImport } from './routes/_public/layout'
+import { Route as AuthLayoutImport } from './routes/_auth/layout'
+import { Route as DashboardSettingsPageImport } from './routes/dashboard/settings/page'
+import { Route as DashboardhomePageImport } from './routes/dashboard/(home)/page'
+import { Route as PublicAboutPageImport } from './routes/_public/about/page'
+import { Route as PublichomePageImport } from './routes/_public/(home)/page'
+import { Route as AuthRegisterPageImport } from './routes/_auth/register/page'
+import { Route as AuthLoginPageImport } from './routes/_auth/login/page'
 
 // Create/Update Routes
 
-const DashboardRouteRoute = DashboardRouteImport.update({
+const DashboardLayoutRoute = DashboardLayoutImport.update({
   id: '/dashboard',
   path: '/dashboard',
   getParentRoute: () => rootRoute,
 } as any)
 
-const PublicRouteRoute = PublicRouteImport.update({
+const PublicLayoutRoute = PublicLayoutImport.update({
   id: '/_public',
   getParentRoute: () => rootRoute,
 } as any)
 
-const AuthRouteRoute = AuthRouteImport.update({
+const AuthLayoutRoute = AuthLayoutImport.update({
   id: '/_auth',
   getParentRoute: () => rootRoute,
 } as any)
 
-const DashboardSettingsIndexRoute = DashboardSettingsIndexImport.update({
+const DashboardSettingsPageRoute = DashboardSettingsPageImport.update({
   id: '/settings/',
   path: '/settings/',
-  getParentRoute: () => DashboardRouteRoute,
+  getParentRoute: () => DashboardLayoutRoute,
 } as any)
 
-const DashboardhomeIndexRoute = DashboardhomeIndexImport.update({
+const DashboardhomePageRoute = DashboardhomePageImport.update({
   id: '/(home)/',
   path: '/',
-  getParentRoute: () => DashboardRouteRoute,
+  getParentRoute: () => DashboardLayoutRoute,
 } as any)
 
-const PublicAboutIndexRoute = PublicAboutIndexImport.update({
+const PublicAboutPageRoute = PublicAboutPageImport.update({
   id: '/about/',
   path: '/about/',
-  getParentRoute: () => PublicRouteRoute,
+  getParentRoute: () => PublicLayoutRoute,
 } as any)
 
-const PublichomeIndexRoute = PublichomeIndexImport.update({
+const PublichomePageRoute = PublichomePageImport.update({
   id: '/(home)/',
   path: '/',
-  getParentRoute: () => PublicRouteRoute,
+  getParentRoute: () => PublicLayoutRoute,
 } as any)
 
-const AuthRegisterIndexRoute = AuthRegisterIndexImport.update({
+const AuthRegisterPageRoute = AuthRegisterPageImport.update({
   id: '/register/',
   path: '/register/',
-  getParentRoute: () => AuthRouteRoute,
+  getParentRoute: () => AuthLayoutRoute,
 } as any)
 
-const AuthLoginIndexRoute = AuthLoginIndexImport.update({
+const AuthLoginPageRoute = AuthLoginPageImport.update({
   id: '/login/',
   path: '/login/',
-  getParentRoute: () => AuthRouteRoute,
+  getParentRoute: () => AuthLayoutRoute,
 } as any)
 
 // Populate the FileRoutesByPath interface
@@ -83,144 +83,144 @@ declare module '@tanstack/react-router' {
       id: '/_auth'
       path: ''
       fullPath: ''
-      preLoaderRoute: typeof AuthRouteImport
+      preLoaderRoute: typeof AuthLayoutImport
       parentRoute: typeof rootRoute
     }
     '/_public': {
       id: '/_public'
       path: ''
       fullPath: ''
-      preLoaderRoute: typeof PublicRouteImport
+      preLoaderRoute: typeof PublicLayoutImport
       parentRoute: typeof rootRoute
     }
     '/dashboard': {
       id: '/dashboard'
       path: '/dashboard'
       fullPath: '/dashboard'
-      preLoaderRoute: typeof DashboardRouteImport
+      preLoaderRoute: typeof DashboardLayoutImport
       parentRoute: typeof rootRoute
     }
     '/_auth/login/': {
       id: '/_auth/login/'
       path: '/login'
       fullPath: '/login'
-      preLoaderRoute: typeof AuthLoginIndexImport
-      parentRoute: typeof AuthRouteImport
+      preLoaderRoute: typeof AuthLoginPageImport
+      parentRoute: typeof AuthLayoutImport
     }
     '/_auth/register/': {
       id: '/_auth/register/'
       path: '/register'
       fullPath: '/register'
-      preLoaderRoute: typeof AuthRegisterIndexImport
-      parentRoute: typeof AuthRouteImport
+      preLoaderRoute: typeof AuthRegisterPageImport
+      parentRoute: typeof AuthLayoutImport
     }
     '/_public/(home)/': {
       id: '/_public/(home)/'
       path: '/'
       fullPath: '/'
-      preLoaderRoute: typeof PublichomeIndexImport
-      parentRoute: typeof PublicRouteImport
+      preLoaderRoute: typeof PublichomePageImport
+      parentRoute: typeof PublicLayoutImport
     }
     '/_public/about/': {
       id: '/_public/about/'
       path: '/about'
       fullPath: '/about'
-      preLoaderRoute: typeof PublicAboutIndexImport
-      parentRoute: typeof PublicRouteImport
+      preLoaderRoute: typeof PublicAboutPageImport
+      parentRoute: typeof PublicLayoutImport
     }
     '/dashboard/(home)/': {
       id: '/dashboard/(home)/'
       path: '/'
       fullPath: '/dashboard/'
-      preLoaderRoute: typeof DashboardhomeIndexImport
-      parentRoute: typeof DashboardRouteImport
+      preLoaderRoute: typeof DashboardhomePageImport
+      parentRoute: typeof DashboardLayoutImport
     }
     '/dashboard/settings/': {
       id: '/dashboard/settings/'
       path: '/settings'
       fullPath: '/dashboard/settings'
-      preLoaderRoute: typeof DashboardSettingsIndexImport
-      parentRoute: typeof DashboardRouteImport
+      preLoaderRoute: typeof DashboardSettingsPageImport
+      parentRoute: typeof DashboardLayoutImport
     }
   }
 }
 
 // Create and export the route tree
 
-interface AuthRouteRouteChildren {
-  AuthLoginIndexRoute: typeof AuthLoginIndexRoute
-  AuthRegisterIndexRoute: typeof AuthRegisterIndexRoute
+interface AuthLayoutRouteChildren {
+  AuthLoginPageRoute: typeof AuthLoginPageRoute
+  AuthRegisterPageRoute: typeof AuthRegisterPageRoute
 }
 
-const AuthRouteRouteChildren: AuthRouteRouteChildren = {
-  AuthLoginIndexRoute: AuthLoginIndexRoute,
-  AuthRegisterIndexRoute: AuthRegisterIndexRoute,
+const AuthLayoutRouteChildren: AuthLayoutRouteChildren = {
+  AuthLoginPageRoute: AuthLoginPageRoute,
+  AuthRegisterPageRoute: AuthRegisterPageRoute,
 }
 
-const AuthRouteRouteWithChildren = AuthRouteRoute._addFileChildren(
-  AuthRouteRouteChildren,
+const AuthLayoutRouteWithChildren = AuthLayoutRoute._addFileChildren(
+  AuthLayoutRouteChildren,
 )
 
-interface PublicRouteRouteChildren {
-  PublichomeIndexRoute: typeof PublichomeIndexRoute
-  PublicAboutIndexRoute: typeof PublicAboutIndexRoute
+interface PublicLayoutRouteChildren {
+  PublichomePageRoute: typeof PublichomePageRoute
+  PublicAboutPageRoute: typeof PublicAboutPageRoute
 }
 
-const PublicRouteRouteChildren: PublicRouteRouteChildren = {
-  PublichomeIndexRoute: PublichomeIndexRoute,
-  PublicAboutIndexRoute: PublicAboutIndexRoute,
+const PublicLayoutRouteChildren: PublicLayoutRouteChildren = {
+  PublichomePageRoute: PublichomePageRoute,
+  PublicAboutPageRoute: PublicAboutPageRoute,
 }
 
-const PublicRouteRouteWithChildren = PublicRouteRoute._addFileChildren(
-  PublicRouteRouteChildren,
+const PublicLayoutRouteWithChildren = PublicLayoutRoute._addFileChildren(
+  PublicLayoutRouteChildren,
 )
 
-interface DashboardRouteRouteChildren {
-  DashboardhomeIndexRoute: typeof DashboardhomeIndexRoute
-  DashboardSettingsIndexRoute: typeof DashboardSettingsIndexRoute
+interface DashboardLayoutRouteChildren {
+  DashboardhomePageRoute: typeof DashboardhomePageRoute
+  DashboardSettingsPageRoute: typeof DashboardSettingsPageRoute
 }
 
-const DashboardRouteRouteChildren: DashboardRouteRouteChildren = {
-  DashboardhomeIndexRoute: DashboardhomeIndexRoute,
-  DashboardSettingsIndexRoute: DashboardSettingsIndexRoute,
+const DashboardLayoutRouteChildren: DashboardLayoutRouteChildren = {
+  DashboardhomePageRoute: DashboardhomePageRoute,
+  DashboardSettingsPageRoute: DashboardSettingsPageRoute,
 }
 
-const DashboardRouteRouteWithChildren = DashboardRouteRoute._addFileChildren(
-  DashboardRouteRouteChildren,
+const DashboardLayoutRouteWithChildren = DashboardLayoutRoute._addFileChildren(
+  DashboardLayoutRouteChildren,
 )
 
 export interface FileRoutesByFullPath {
-  '': typeof PublicRouteRouteWithChildren
-  '/dashboard': typeof DashboardRouteRouteWithChildren
-  '/login': typeof AuthLoginIndexRoute
-  '/register': typeof AuthRegisterIndexRoute
-  '/': typeof PublichomeIndexRoute
-  '/about': typeof PublicAboutIndexRoute
-  '/dashboard/': typeof DashboardhomeIndexRoute
-  '/dashboard/settings': typeof DashboardSettingsIndexRoute
+  '': typeof PublicLayoutRouteWithChildren
+  '/dashboard': typeof DashboardLayoutRouteWithChildren
+  '/login': typeof AuthLoginPageRoute
+  '/register': typeof AuthRegisterPageRoute
+  '/': typeof PublichomePageRoute
+  '/about': typeof PublicAboutPageRoute
+  '/dashboard/': typeof DashboardhomePageRoute
+  '/dashboard/settings': typeof DashboardSettingsPageRoute
 }
 
 export interface FileRoutesByTo {
-  '': typeof AuthRouteRouteWithChildren
-  '/login': typeof AuthLoginIndexRoute
-  '/register': typeof AuthRegisterIndexRoute
-  '/': typeof PublichomeIndexRoute
-  '/about': typeof PublicAboutIndexRoute
-  '/dashboard': typeof DashboardhomeIndexRoute
-  '/dashboard/settings': typeof DashboardSettingsIndexRoute
+  '': typeof AuthLayoutRouteWithChildren
+  '/login': typeof AuthLoginPageRoute
+  '/register': typeof AuthRegisterPageRoute
+  '/': typeof PublichomePageRoute
+  '/about': typeof PublicAboutPageRoute
+  '/dashboard': typeof DashboardhomePageRoute
+  '/dashboard/settings': typeof DashboardSettingsPageRoute
 }
 
 export interface FileRoutesById {
   __root__: typeof rootRoute
-  '/_auth': typeof AuthRouteRouteWithChildren
-  '/_public': typeof PublicRouteRouteWithChildren
-  '/dashboard': typeof DashboardRouteRouteWithChildren
-  '/_auth/login/': typeof AuthLoginIndexRoute
-  '/_auth/register/': typeof AuthRegisterIndexRoute
-  '/_public/(home)/': typeof PublichomeIndexRoute
-  '/_public/about/': typeof PublicAboutIndexRoute
-  '/dashboard/(home)/': typeof DashboardhomeIndexRoute
-  '/dashboard/settings/': typeof DashboardSettingsIndexRoute
+  '/_auth': typeof AuthLayoutRouteWithChildren
+  '/_public': typeof PublicLayoutRouteWithChildren
+  '/dashboard': typeof DashboardLayoutRouteWithChildren
+  '/_auth/login/': typeof AuthLoginPageRoute
+  '/_auth/register/': typeof AuthRegisterPageRoute
+  '/_public/(home)/': typeof PublichomePageRoute
+  '/_public/about/': typeof PublicAboutPageRoute
+  '/dashboard/(home)/': typeof DashboardhomePageRoute
+  '/dashboard/settings/': typeof DashboardSettingsPageRoute
 }
 
 export interface FileRouteTypes {
@@ -258,15 +258,15 @@ export interface FileRouteTypes {
 }
 
 export interface RootRouteChildren {
-  AuthRouteRoute: typeof AuthRouteRouteWithChildren
-  PublicRouteRoute: typeof PublicRouteRouteWithChildren
-  DashboardRouteRoute: typeof DashboardRouteRouteWithChildren
+  AuthLayoutRoute: typeof AuthLayoutRouteWithChildren
+  PublicLayoutRoute: typeof PublicLayoutRouteWithChildren
+  DashboardLayoutRoute: typeof DashboardLayoutRouteWithChildren
 }
 
 const rootRouteChildren: RootRouteChildren = {
-  AuthRouteRoute: AuthRouteRouteWithChildren,
-  PublicRouteRoute: PublicRouteRouteWithChildren,
-  DashboardRouteRoute: DashboardRouteRouteWithChildren,
+  AuthLayoutRoute: AuthLayoutRouteWithChildren,
+  PublicLayoutRoute: PublicLayoutRouteWithChildren,
+  DashboardLayoutRoute: DashboardLayoutRouteWithChildren,
 }
 
 export const routeTree = rootRoute
@@ -285,48 +285,48 @@ export const routeTree = rootRoute
       ]
     },
     "/_auth": {
-      "filePath": "_auth/route.tsx",
+      "filePath": "_auth/layout.tsx",
       "children": [
         "/_auth/login/",
         "/_auth/register/"
       ]
     },
     "/_public": {
-      "filePath": "_public/route.tsx",
+      "filePath": "_public/layout.tsx",
       "children": [
         "/_public/(home)/",
         "/_public/about/"
       ]
     },
     "/dashboard": {
-      "filePath": "dashboard/route.tsx",
+      "filePath": "dashboard/layout.tsx",
       "children": [
         "/dashboard/(home)/",
         "/dashboard/settings/"
       ]
     },
     "/_auth/login/": {
-      "filePath": "_auth/login/index.tsx",
+      "filePath": "_auth/login/page.tsx",
       "parent": "/_auth"
     },
     "/_auth/register/": {
-      "filePath": "_auth/register/index.tsx",
+      "filePath": "_auth/register/page.tsx",
       "parent": "/_auth"
     },
     "/_public/(home)/": {
-      "filePath": "_public/(home)/index.tsx",
+      "filePath": "_public/(home)/page.tsx",
       "parent": "/_public"
     },
     "/_public/about/": {
-      "filePath": "_public/about/index.tsx",
+      "filePath": "_public/about/page.tsx",
       "parent": "/_public"
     },
     "/dashboard/(home)/": {
-      "filePath": "dashboard/(home)/index.tsx",
+      "filePath": "dashboard/(home)/page.tsx",
       "parent": "/dashboard"
     },
     "/dashboard/settings/": {
-      "filePath": "dashboard/settings/index.tsx",
+      "filePath": "dashboard/settings/page.tsx",
       "parent": "/dashboard"
     }
   }

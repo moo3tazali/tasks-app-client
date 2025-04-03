@@ -1,5 +1,5 @@
 import { Link } from '@tanstack/react-router';
-import { Button, Logo } from '../ui';
+import { Button, Logo } from '../../../components/ui';
 
 export const PublicHeader = () => {
   return (

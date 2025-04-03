@@ -2,6 +2,9 @@ import { z } from 'zod';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 
+import { Auth } from '@/api/auth';
+import { useMutation } from '@/hooks/use-mutation';
+
 const formSchema = z.object({
   identifier: z
     .string()
@@ -14,19 +17,32 @@ type FormData = z.infer<typeof formSchema>;
 export const useLogin = () => {
   const form = useForm<FormData>({
     resolver: zodResolver(formSchema),
+    defaultValues: {
+      identifier: '',
+      password: '',
+    },
+  });
+
+  const { mutate: login, isPending } = useMutation({
+    operationName: 'login',
+    mutationFn: Auth.login,
+    formControl: form.control,
+    onSuccess: (res) => {
+      const accessToken = res.data.accessToken;
+
+      console.log(accessToken);
+    },
   });
 
   function onSubmit(values: FormData) {
-    try {
-      console.log(values);
-    } catch (error) {
-      console.error('Form submission error', error);
-    }
+    form.clearErrors();
+    login(values);
   }
 
   return {
     form: {
       ...form,
+      isPending,
       onSubmit: form.handleSubmit(onSubmit),
     },
   };

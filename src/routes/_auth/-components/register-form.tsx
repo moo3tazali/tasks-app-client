@@ -18,13 +18,13 @@ import {
   PasswordInput,
   FormErrorMessage,
 } from '@/components/ui';
-import { useLogin } from '../-hooks/use-login';
+import { useRegister } from '../-hooks/use-register';
 
-export function LoginForm({
+export function RegisterForm({
   className,
   ...props
 }: React.ComponentPropsWithoutRef<'div'>) {
-  const { form } = useLogin();
+  const { form } = useRegister();
 
   return (
     <div
@@ -36,9 +36,11 @@ export function LoginForm({
     >
       <Card>
         <CardHeader>
-          <CardTitle className='text-2xl'>Login</CardTitle>
+          <CardTitle className='text-2xl'>
+            Register
+          </CardTitle>
           <CardDescription>
-            Enter your username or email below to login to
+            Enter your username or email below to register
             your account
           </CardDescription>
         </CardHeader>
@@ -50,14 +52,33 @@ export function LoginForm({
             >
               <FormField
                 control={form.control}
-                name='identifier'
+                name='username'
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Identifier</FormLabel>
+                    <FormLabel>Username</FormLabel>
                     <FormControl>
                       <Input
                         {...field}
-                        placeholder='exampleUser | user@example.com'
+                        placeholder='exampleUser'
+                        disabled={form.isPending}
+                      />
+                    </FormControl>
+
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name='email'
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Email</FormLabel>
+                    <FormControl>
+                      <Input
+                        {...field}
+                        placeholder='user@example.com'
                         disabled={form.isPending}
                       />
                     </FormControl>
@@ -72,20 +93,7 @@ export function LoginForm({
                 name='password'
                 render={({ field }) => (
                   <FormItem>
-                    <div className='flex items-center gap-3 justify-between'>
-                      <FormLabel>Password</FormLabel>
-                      <Button
-                        variant='link'
-                        asChild
-                        className='p-0 text-sm m-0 h-auto'
-                        type='button'
-                        disabled={form.isPending}
-                      >
-                        <a href='#'>
-                          Forgot your password?
-                        </a>
-                      </Button>
-                    </div>
+                    <FormLabel>Password</FormLabel>
                     <FormControl>
                       <PasswordInput
                         {...field}
@@ -108,13 +116,15 @@ export function LoginForm({
                 className='w-full'
                 disabled={form.isPending}
               >
-                {form.isPending ? 'Loading...' : 'Login'}
+                {form.isPending
+                  ? 'Loading...'
+                  : 'Register Now'}
               </Button>
             </form>
           </Form>
 
           <div className='mt-4 text-center text-sm'>
-            Don&apos;t have an account?{' '}
+            Already have an account?{' '}
             <Button
               variant='link'
               asChild
@@ -122,7 +132,7 @@ export function LoginForm({
               type='button'
               disabled={form.isPending}
             >
-              <Link to='/register'>Sign up</Link>
+              <Link to='/login'>Login</Link>
             </Button>
           </div>
         </CardContent>

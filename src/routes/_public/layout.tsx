@@ -11,13 +11,11 @@ export const Route = createFileRoute('/_public')({
 
 function PublicLayout() {
   return (
-    <div className='h-full bg-gray-100'>
-      <div className='h-full container mx-auto'>
-        <PublicHeader />
-        <main>
-          <Outlet />
-        </main>
-      </div>
+    <div className='h-full container mx-auto'>
+      <PublicHeader />
+      <main>
+        <Outlet />
+      </main>
     </div>
   );
 }

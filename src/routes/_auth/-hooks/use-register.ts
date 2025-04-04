@@ -39,7 +39,7 @@ export const useRegister = () => {
     },
   });
 
-  const { set } = useAuth();
+  const set = useAuth((s) => s.set);
 
   const navigate = useNavigate();
 

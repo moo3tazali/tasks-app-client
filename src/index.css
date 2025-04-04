@@ -157,6 +157,6 @@
   }
 
   body {
-    @apply bg-background text-foreground font-cairo antialiased;
+    @apply text-foreground font-cairo antialiased bg-gray-100;
   }
 }

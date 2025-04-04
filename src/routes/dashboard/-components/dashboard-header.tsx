@@ -1,7 +1,5 @@
-import toast from 'react-hot-toast';
-
 import { Button, Logo } from '@/components/ui';
-import { useAuth } from '@/hooks/use-auth';
+import { useLogout } from '@/hooks/use-logout';
 
 export const DashboardHeader = () => {
   return (
@@ -14,19 +12,7 @@ export const DashboardHeader = () => {
 };
 
 const LogoutButton = () => {
-  const { clear } = useAuth();
+  const { onLogout } = useLogout();
 
-  const onLogout = async () => {
-    const loading = toast.loading('Logging out...');
-
-    // simulate logout delay
-    await new Promise((resolve) =>
-      setTimeout(resolve, 1000)
-    );
-
-    toast.dismiss(loading);
-    clear();
-    toast.success('You have been logged out');
-  };
   return <Button onClick={onLogout}>Logout</Button>;
 };

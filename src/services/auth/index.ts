@@ -1,14 +1,12 @@
-import Cookies from 'universal-cookie';
+import Dexie from 'dexie';
 import { EncryptJWT, jwtDecrypt, decodeJwt } from 'jose';
 
 import { publicApi, handle } from '@/services/axios';
 import { SuccessRes } from '@/interfaces/api-res';
 
-const cookies = new Cookies(null, {
-  path: '/',
-  expires: new Date(Date.now() + 1000 * 60 * 60 * 24 * 30),
-  sameSite: 'strict',
-  secure: import.meta.env.PROD,
+const db = new Dexie('MyDatabase');
+db.version(1).stores({
+  tokens: 'id, value',
 });
 
 export interface User {
@@ -23,7 +21,7 @@ export interface User {
 export interface AuthType {
   isAuthenticated: boolean;
   user: User;
-  clear: () => void;
+  clear: (cb?: () => void) => void;
   set: (token: string, cb?: () => void) => void;
 }
 
@@ -41,7 +39,7 @@ export class Auth {
   static readonly registerUrl = '/auth/register';
   private static readonly secretKey =
     (import.meta.env.VITE_TOKEN_SECRET as string) ?? '';
-  private static readonly tokenKey = 'accessToken';
+  private static readonly tokenId = 'authToken';
 
   static async login(data: {
     identifier: string;
@@ -64,20 +62,24 @@ export class Auth {
 
   static async setToken(token: string) {
     const signedToken = await Auth.encryptToken(token);
-    cookies.set(Auth.tokenKey, signedToken);
+
+    await db
+      .table('tokens')
+      .put({ id: Auth.tokenId, value: signedToken });
   }
 
   static async getToken(): Promise<string | null> {
-    const encryptedToken =
-      (cookies.get(Auth.tokenKey) as string) ?? '';
+    const encryptedToken = (
+      await db.table('tokens').get(Auth.tokenId)
+    )?.value as string | null;
 
     if (!encryptedToken) return null;
 
     return await Auth.decryptToken(encryptedToken);
   }
 
-  static clearToken(): void {
-    cookies.remove(Auth.tokenKey);
+  static async clearToken(): Promise<void> {
+    await db.table('tokens').delete(Auth.tokenId);
   }
 
   static async isAuthenticated(): Promise<boolean> {

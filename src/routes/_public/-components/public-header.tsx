@@ -14,7 +14,7 @@ export const PublicHeader = () => {
 };
 
 const Actions = () => {
-  const { isAuthenticated } = useAuth();
+  const isAuthenticated = useAuth((s) => s.isAuthenticated);
 
   if (isAuthenticated) {
     return (

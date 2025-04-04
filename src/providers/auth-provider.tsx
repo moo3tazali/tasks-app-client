@@ -1,67 +1,72 @@
 import {
   createContext,
-  useCallback,
-  useContext,
   useEffect,
+  useMemo,
   useState,
 } from 'react';
+import { createStore, StoreApi } from 'zustand';
 
 import {
   Auth,
   defaultUser,
+  type User,
   type AuthType,
 } from '@/services/auth';
-import {
-  useLocation,
-  useNavigate,
-} from '@tanstack/react-router';
 
-const AuthContext = createContext<AuthType | null>(null);
+const AuthContext =
+  createContext<StoreApi<AuthType> | null>(null);
 
-const user = await Auth.getUser();
-
-const AuthProvider = ({
-  children,
-}: {
+interface AuthProviderProps {
+  initialUser: User;
   children: React.ReactNode;
+}
+
+const AuthProvider: React.FC<AuthProviderProps> = ({
+  children,
+  initialUser,
 }) => {
-  const [auth, setAuth] = useState(user);
+  const [store] = useState(() =>
+    createStore<AuthType>((setState) => ({
+      isAuthenticated: initialUser.isAuthenticated,
+      user: initialUser,
 
-  const { pathname } = useLocation();
+      clear: (cb) => {
+        Auth.clearToken()
+          .then(() => {
+            setState({
+              isAuthenticated: false,
+              user: defaultUser,
+            });
 
-  const navigate = useNavigate();
+            if (cb) {
+              cb();
+            }
+          })
+          .catch(console.error);
+      },
 
-  const clear = useCallback(() => {
-    const currentPathname = pathname;
-    const isDashboardRoute =
-      currentPathname.startsWith('/dashboard');
+      set(token, cb) {
+        Auth.setToken(token)
+          .then(() => {
+            return Auth.getUser();
+          })
+          .then((user) => {
+            setState({
+              isAuthenticated: user.isAuthenticated,
+              user,
+            });
+            if (cb) {
+              cb();
+            }
+          })
+          .catch(console.error);
+      },
+    }))
+  );
 
-    Auth.clearToken();
-    setAuth(defaultUser);
-
-    if (isDashboardRoute) {
-      navigate({
-        to: '/login',
-        search: {
-          redirect: currentPathname,
-        },
-      });
-    }
-  }, [pathname, navigate]);
-
-  const set = useCallback(
-    async (token: string, cb?: () => void) => {
-      await Auth.setToken(token);
-
-      const user = await Auth.getUser();
-
-      setAuth(user);
-
-      if (cb) {
-        cb();
-      }
-    },
-    []
+  const clear = useMemo(
+    () => store.subscribe((s) => s.clear),
+    [store]
   );
 
   useEffect(() => {
@@ -80,33 +85,13 @@ const AuthProvider = ({
     );
 
     return () => clearInterval(checkAuthInterval);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [clear]);
 
   return (
-    <AuthContext.Provider
-      value={{
-        isAuthenticated: auth.isAuthenticated,
-        user: auth,
-        clear,
-        set,
-      }}
-    >
+    <AuthContext.Provider value={store}>
       {children}
     </AuthContext.Provider>
   );
 };
 
-const useAuth = () => {
-  const auth = useContext(AuthContext);
-
-  if (!auth) {
-    throw new Error(
-      'useAuth should be used within <AuthProvider>'
-    );
-  }
-
-  return auth;
-};
-
-export { AuthProvider, useAuth };
+export { AuthProvider, AuthContext };

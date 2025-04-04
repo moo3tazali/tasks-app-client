@@ -4,17 +4,18 @@ import {
   redirect,
 } from '@tanstack/react-router';
 
-import { Auth } from '@/services/auth';
+import { ROUTES } from '@/router';
+import { AuthGuard } from '@/providers/auth-guard';
 import { DashboardHeader } from './-components/dashboard-header';
 
 export const Route = createFileRoute('/dashboard')({
   component: DashboardLayout,
-  beforeLoad: async ({ location }) => {
-    const isAuthenticated = await Auth.isAuthenticated();
+  beforeLoad: ({ location, context }) => {
+    const isAuthenticated = context.auth.isAuthenticated;
 
     if (!isAuthenticated) {
       throw redirect({
-        to: '/login',
+        to: ROUTES.AUTH.LOGIN,
         search: {
           redirect: location.pathname,
         },
@@ -25,11 +26,11 @@ export const Route = createFileRoute('/dashboard')({
 
 function DashboardLayout() {
   return (
-    <div className='h-full bg-gray-100'>
+    <AuthGuard>
       <DashboardHeader />
       <main>
         <Outlet />
       </main>
-    </div>
+    </AuthGuard>
   );
 }

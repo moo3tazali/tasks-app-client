@@ -1,13 +1,14 @@
+import { Suspense, use } from 'react';
 import {
   QueryClient,
   QueryClientProvider,
 } from '@tanstack/react-query';
 import { Toaster } from 'react-hot-toast';
+import { CookiesProvider } from 'react-cookie';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 
 import { AuthProvider } from '@/providers/auth-provider';
 import { Auth } from '@/services/auth';
-import { Suspense, use } from 'react';
 
 // Create a client
 const queryClient = new QueryClient();
@@ -22,14 +23,16 @@ export const AppProviders = ({ children }: Props) => {
   const initialUser = use(user);
 
   return (
-    <Suspense fallback={<div>Loading...</div>}>
-      <AuthProvider initialUser={initialUser}>
-        <QueryClientProvider client={queryClient}>
-          {children}
-          <Toaster />
-          <ReactQueryDevtools />
-        </QueryClientProvider>
-      </AuthProvider>
+    <Suspense fallback={null}>
+      <CookiesProvider defaultSetOptions={{ path: '/' }}>
+        <AuthProvider initialUser={initialUser}>
+          <QueryClientProvider client={queryClient}>
+            {children}
+            <Toaster />
+            <ReactQueryDevtools />
+          </QueryClientProvider>
+        </AuthProvider>
+      </CookiesProvider>
     </Suspense>
   );
 };

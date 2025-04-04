@@ -19,7 +19,7 @@ function Routes() {
   return (
     <>
       <Outlet />
-      <TanStackRouterDevtools />
+      <TanStackRouterDevtools position='bottom-right' />
     </>
   );
 }

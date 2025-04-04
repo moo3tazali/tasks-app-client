@@ -152,11 +152,20 @@
     @apply h-full;
   }
 
-  #root {
+  /* #root {
     @apply p-1;
-  }
+  } */
 
   body {
-    @apply text-foreground font-cairo antialiased bg-gray-100;
+    @apply text-foreground font-cairo antialiased bg-background;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground;
   }
 }

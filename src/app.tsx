@@ -2,7 +2,7 @@ import { RouterProvider } from '@tanstack/react-router';
 import { router } from './router';
 
 import { useAuth } from '@/hooks/use-auth';
-import { AppProviders } from '@/providers';
+import { AppProviders } from '@/providers/app-providers';
 
 export function App() {
   return (

@@ -7,7 +7,7 @@ export const Route = createFileRoute('/_public/(home)/')({
 function Index() {
   return (
     <div className='p-3 md:p-5 mt-40 space-y-3'>
-      <h1 className='text-center font-medium text-4xl md:text-6xl leading-tight'>
+      <h1 className='text-center font-medium text-[5vw] md:text-[3.5vw] leading-tight'>
         Seamless Task Management for
         <br />
         Teams and Individuals

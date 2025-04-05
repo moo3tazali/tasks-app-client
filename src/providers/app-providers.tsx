@@ -1,4 +1,4 @@
-import { Suspense, use } from 'react';
+import { use } from 'react';
 import {
   QueryClient,
   QueryClientProvider,
@@ -8,31 +8,30 @@ import { CookiesProvider } from 'react-cookie';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 
 import { AuthProvider } from '@/providers/auth-provider';
-import { Auth } from '@/services/auth';
+import { User } from '@/services/auth';
 
 // Create a client
 const queryClient = new QueryClient();
 
-// initial user
-const user = Auth.getUser();
-
 type Props = {
   children: React.ReactNode;
+  userPromise: Promise<User>;
 };
-export const AppProviders = ({ children }: Props) => {
-  const initialUser = use(user);
+export const AppProviders = ({
+  children,
+  userPromise,
+}: Props) => {
+  const initialUser = use(userPromise);
 
   return (
-    <Suspense fallback={null}>
-      <CookiesProvider defaultSetOptions={{ path: '/' }}>
-        <AuthProvider initialUser={initialUser}>
-          <QueryClientProvider client={queryClient}>
-            {children}
-            <Toaster />
-            <ReactQueryDevtools />
-          </QueryClientProvider>
-        </AuthProvider>
-      </CookiesProvider>
-    </Suspense>
+    <CookiesProvider defaultSetOptions={{ path: '/' }}>
+      <AuthProvider initialUser={initialUser}>
+        <QueryClientProvider client={queryClient}>
+          {children}
+          <Toaster />
+          <ReactQueryDevtools />
+        </QueryClientProvider>
+      </AuthProvider>
+    </CookiesProvider>
   );
 };

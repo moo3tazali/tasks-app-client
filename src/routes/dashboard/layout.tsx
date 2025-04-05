@@ -15,6 +15,7 @@ import {
   SidebarProvider,
 } from '@/components/ui';
 import { DashboardHeader } from './-components/dashboard-header';
+import { NotFoundFallback } from '@/components/fallback';
 
 export const Route = createFileRoute('/dashboard')({
   component: DashboardLayout,
@@ -30,6 +31,9 @@ export const Route = createFileRoute('/dashboard')({
       });
     }
   },
+  notFoundComponent: (data) => (
+    <NotFoundFallback data={data} to='/dashboard' />
+  ),
 });
 
 function DashboardLayout() {

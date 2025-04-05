@@ -37,9 +37,7 @@ export const Route = createFileRoute('/dashboard')({
 });
 
 function DashboardLayout() {
-  const [{ sidebar_state }] = useCookies([
-    SIDEBAR_COOKIE_NAME,
-  ]);
+  const [{ sidebar_state }] = useCookies([SIDEBAR_COOKIE_NAME]);
 
   return (
     <AuthGuard>

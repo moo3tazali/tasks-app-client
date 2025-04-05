@@ -21,7 +21,5 @@ export function App() {
 
 function InnerApp() {
   const auth = useAuth((s) => s.user);
-  return (
-    <RouterProvider router={router} context={{ auth }} />
-  );
+  return <RouterProvider router={router} context={{ auth }} />;
 }

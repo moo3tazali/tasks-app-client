@@ -15,6 +15,7 @@ import { Route as DashboardLayoutImport } from './routes/dashboard/layout'
 import { Route as PublicLayoutImport } from './routes/_public/layout'
 import { Route as AuthLayoutImport } from './routes/_auth/layout'
 import { Route as DashboardSettingsPageImport } from './routes/dashboard/settings/page'
+import { Route as DashboardBoardsPageImport } from './routes/dashboard/boards/page'
 import { Route as DashboardhomePageImport } from './routes/dashboard/(home)/page'
 import { Route as PublicAboutPageImport } from './routes/_public/about/page'
 import { Route as PublichomePageImport } from './routes/_public/(home)/page'
@@ -42,6 +43,12 @@ const AuthLayoutRoute = AuthLayoutImport.update({
 const DashboardSettingsPageRoute = DashboardSettingsPageImport.update({
   id: '/settings/',
   path: '/settings/',
+  getParentRoute: () => DashboardLayoutRoute,
+} as any)
+
+const DashboardBoardsPageRoute = DashboardBoardsPageImport.update({
+  id: '/boards/',
+  path: '/boards/',
   getParentRoute: () => DashboardLayoutRoute,
 } as any)
 
@@ -135,6 +142,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DashboardhomePageImport
       parentRoute: typeof DashboardLayoutImport
     }
+    '/dashboard/boards/': {
+      id: '/dashboard/boards/'
+      path: '/boards'
+      fullPath: '/dashboard/boards'
+      preLoaderRoute: typeof DashboardBoardsPageImport
+      parentRoute: typeof DashboardLayoutImport
+    }
     '/dashboard/settings/': {
       id: '/dashboard/settings/'
       path: '/settings'
@@ -177,11 +191,13 @@ const PublicLayoutRouteWithChildren = PublicLayoutRoute._addFileChildren(
 
 interface DashboardLayoutRouteChildren {
   DashboardhomePageRoute: typeof DashboardhomePageRoute
+  DashboardBoardsPageRoute: typeof DashboardBoardsPageRoute
   DashboardSettingsPageRoute: typeof DashboardSettingsPageRoute
 }
 
 const DashboardLayoutRouteChildren: DashboardLayoutRouteChildren = {
   DashboardhomePageRoute: DashboardhomePageRoute,
+  DashboardBoardsPageRoute: DashboardBoardsPageRoute,
   DashboardSettingsPageRoute: DashboardSettingsPageRoute,
 }
 
@@ -197,6 +213,7 @@ export interface FileRoutesByFullPath {
   '/': typeof PublichomePageRoute
   '/about': typeof PublicAboutPageRoute
   '/dashboard/': typeof DashboardhomePageRoute
+  '/dashboard/boards': typeof DashboardBoardsPageRoute
   '/dashboard/settings': typeof DashboardSettingsPageRoute
 }
 
@@ -207,6 +224,7 @@ export interface FileRoutesByTo {
   '/': typeof PublichomePageRoute
   '/about': typeof PublicAboutPageRoute
   '/dashboard': typeof DashboardhomePageRoute
+  '/dashboard/boards': typeof DashboardBoardsPageRoute
   '/dashboard/settings': typeof DashboardSettingsPageRoute
 }
 
@@ -220,6 +238,7 @@ export interface FileRoutesById {
   '/_public/(home)/': typeof PublichomePageRoute
   '/_public/about/': typeof PublicAboutPageRoute
   '/dashboard/(home)/': typeof DashboardhomePageRoute
+  '/dashboard/boards/': typeof DashboardBoardsPageRoute
   '/dashboard/settings/': typeof DashboardSettingsPageRoute
 }
 
@@ -233,6 +252,7 @@ export interface FileRouteTypes {
     | '/'
     | '/about'
     | '/dashboard/'
+    | '/dashboard/boards'
     | '/dashboard/settings'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -242,6 +262,7 @@ export interface FileRouteTypes {
     | '/'
     | '/about'
     | '/dashboard'
+    | '/dashboard/boards'
     | '/dashboard/settings'
   id:
     | '__root__'
@@ -253,6 +274,7 @@ export interface FileRouteTypes {
     | '/_public/(home)/'
     | '/_public/about/'
     | '/dashboard/(home)/'
+    | '/dashboard/boards/'
     | '/dashboard/settings/'
   fileRoutesById: FileRoutesById
 }
@@ -302,6 +324,7 @@ export const routeTree = rootRoute
       "filePath": "dashboard/layout.tsx",
       "children": [
         "/dashboard/(home)/",
+        "/dashboard/boards/",
         "/dashboard/settings/"
       ]
     },
@@ -323,6 +346,10 @@ export const routeTree = rootRoute
     },
     "/dashboard/(home)/": {
       "filePath": "dashboard/(home)/page.tsx",
+      "parent": "/dashboard"
+    },
+    "/dashboard/boards/": {
+      "filePath": "dashboard/boards/page.tsx",
       "parent": "/dashboard"
     },
     "/dashboard/settings/": {

@@ -23,23 +23,23 @@ export function DashboardSidebar() {
   const { items } = useNavItems();
 
   return (
-    <Sidebar variant='floating' collapsible='icon'>
-      <SidebarHeader>
+    <Sidebar variant='sidebar' collapsible='icon'>
+      <SidebarHeader className='h-16 md:h-20 group-has-[[data-collapsible=icon]]/sidebar-wrapper:h-12 group-has-[[data-collapsible=icon]]/sidebar-wrapper:md:h-16 flex justify-center items-center'>
         <Logo className='group-data-[state=collapsed]:text-xs transition-all ease-linear' />
       </SidebarHeader>
       <SidebarContent>
         <SidebarGroup>
           <SidebarGroupLabel>Application</SidebarGroupLabel>
           <SidebarGroupContent>
-            <SidebarMenu>
+            <SidebarMenu className='gap-2'>
               {items.map((item) => (
                 <SidebarMenuItem key={item.title}>
                   <SidebarMenuButton
                     asChild
-                    isActive={item.isActive}
-                  >
+                    isActive={item.isActive}>
                     <Link to={item.url}>
                       <item.icon />
+
                       <span>{item.title}</span>
                     </Link>
                   </SidebarMenuButton>

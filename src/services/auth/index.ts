@@ -1,66 +1,46 @@
 import Dexie from 'dexie';
 import { EncryptJWT, jwtDecrypt, decodeJwt } from 'jose';
 
-import { publicApi, handle } from '@/services/axios';
-import { SuccessRes } from '@/interfaces/api-res';
+import { publicApi, handle } from '@/lib/axios';
+import type { SuccessRes } from '@/interfaces/api-res';
+import type { TUser } from '@/interfaces/user';
 
 const db = new Dexie('MyDatabase');
 db.version(1).stores({
   tokens: 'id, value',
 });
 
-export interface User {
-  isAuthenticated: boolean;
-  id: string;
-  username: string;
-  email: string;
-  avatarPath: string;
-  roles: string[];
-}
-
-export interface AuthType {
-  isAuthenticated: boolean;
-  user: User;
-  clear: (cb?: () => void) => void;
-  set: (token: string, cb?: () => void) => void;
-}
-
-export const defaultUser: User = {
-  isAuthenticated: false,
-  id: '',
-  username: '',
-  email: '',
-  avatarPath: '',
-  roles: [],
-};
-
 export class Auth {
-  static readonly loginUrl = '/auth/login';
-  static readonly registerUrl = '/auth/register';
+  public static readonly defaultUser: TUser = {
+    isAuthenticated: false,
+    id: '',
+    username: '',
+    email: '',
+    avatarPath: '',
+    roles: [],
+  };
+  public static readonly loginUrl = '/auth/login';
+  public static readonly registerUrl = '/auth/register';
   private static readonly secretKey =
     (import.meta.env.VITE_TOKEN_SECRET as string) ?? '';
   private static readonly tokenId = 'authToken';
 
-  static async login(data: {
+  public static async login(data: {
     identifier: string;
     password: string;
   }): Promise<SuccessRes<{ accessToken: string }>> {
-    return handle(() =>
-      publicApi.post(Auth.loginUrl, data)
-    );
+    return handle(() => publicApi.post(Auth.loginUrl, data));
   }
 
-  static async register(data: {
+  public static async register(data: {
     username: string;
     email: string;
     password: string;
   }): Promise<SuccessRes<{ accessToken: string }>> {
-    return handle(() =>
-      publicApi.post(Auth.registerUrl, data)
-    );
+    return handle(() => publicApi.post(Auth.registerUrl, data));
   }
 
-  static async setToken(token: string) {
+  public static async setToken(token: string) {
     const signedToken = await Auth.encryptToken(token);
 
     await db
@@ -68,7 +48,7 @@ export class Auth {
       .put({ id: Auth.tokenId, value: signedToken });
   }
 
-  static async getToken(): Promise<string | null> {
+  public static async getToken(): Promise<string | null> {
     const encryptedToken = (
       await db.table('tokens').get(Auth.tokenId)
     )?.value as string | null;
@@ -78,11 +58,11 @@ export class Auth {
     return await Auth.decryptToken(encryptedToken);
   }
 
-  static async clearToken(): Promise<void> {
+  public static async clearToken(): Promise<void> {
     await db.table('tokens').delete(Auth.tokenId);
   }
 
-  static async isAuthenticated(): Promise<boolean> {
+  public static async isAuthenticated(): Promise<boolean> {
     try {
       const token = await Auth.getToken();
       return !!token;
@@ -91,18 +71,18 @@ export class Auth {
     }
   }
 
-  static async getUser(): Promise<User> {
+  public static async getUser(): Promise<TUser> {
     try {
       const token = await Auth.getToken();
 
       return Auth.decodeToken(token);
     } catch {
-      return defaultUser;
+      return Auth.defaultUser;
     }
   }
 
-  private static decodeToken(token: string | null): User {
-    if (!token) return defaultUser;
+  private static decodeToken(token: string | null): TUser {
+    if (!token) return Auth.defaultUser;
 
     try {
       const decoded = decodeJwt(token);
@@ -116,13 +96,11 @@ export class Auth {
         roles: decoded?.roles as string[],
       };
     } catch {
-      return defaultUser;
+      return Auth.defaultUser;
     }
   }
 
-  private static async encryptToken(
-    token: string
-  ): Promise<string> {
+  private static async encryptToken(token: string): Promise<string> {
     const secret = Auth.hexToBytes(Auth.secretKey);
 
     const encryptedToken = await new EncryptJWT({ token })
@@ -143,10 +121,7 @@ export class Auth {
     const secret = Auth.hexToBytes(Auth.secretKey);
 
     try {
-      const { payload } = await jwtDecrypt(
-        encryptedToken,
-        secret
-      );
+      const { payload } = await jwtDecrypt(encryptedToken, secret);
 
       const decodedToken = payload.token as string;
 

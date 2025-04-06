@@ -1,4 +1,3 @@
-import { use } from 'react';
 import {
   QueryClient,
   QueryClientProvider,
@@ -8,27 +7,28 @@ import { CookiesProvider } from 'react-cookie';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 
 import { AuthProvider } from '@/providers/auth-provider';
-import { User } from '@/services/auth';
+import { Auth } from '@/services/auth';
 
 // Create a client
-const queryClient = new QueryClient();
+export const queryClient = new QueryClient();
+
+// load user from indexDB
+const user = await Auth.getUser();
 
 type Props = {
   children: React.ReactNode;
-  userPromise: Promise<User>;
 };
-export const AppProviders = ({
-  children,
-  userPromise,
-}: Props) => {
-  const initialUser = use(userPromise);
-
+export const AppProviders = ({ children }: Props) => {
   return (
     <CookiesProvider defaultSetOptions={{ path: '/' }}>
-      <AuthProvider initialUser={initialUser}>
+      <AuthProvider initialUser={user}>
         <QueryClientProvider client={queryClient}>
           {children}
-          <Toaster />
+          <Toaster
+            toastOptions={{
+              className: '!text-foreground !bg-background',
+            }}
+          />
           <ReactQueryDevtools />
         </QueryClientProvider>
       </AuthProvider>

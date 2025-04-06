@@ -6,11 +6,11 @@ import { ComponentProps } from 'react';
 
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui';
-import { ROUTES, ToRoute } from '@/router';
+import { ROUTES } from '@/router';
 
 type NotFoundFallbackProps = NotFoundRouteProps &
   ComponentProps<'div'> & {
-    to?: ToRoute;
+    to?: typeof ROUTES.PUBLIC.HOME | typeof ROUTES.DASHBOARD.HOME;
   };
 
 export const NotFoundFallback = ({
@@ -24,14 +24,12 @@ export const NotFoundFallback = ({
       className={cn(
         'flex flex-col gap-3 h-full w-full text-[4vw] items-center justify-center',
         className
-      )}
-    >
+      )}>
       <h1>404 Not Found</h1>
       <Button
         asChild
         size='lg'
-        className='w-full max-w-sm font-bold text-sm md:text-xl'
-      >
+        className='w-full max-w-sm font-bold text-sm md:text-xl'>
         <Link to={to ?? ROUTES.PUBLIC.HOME}>Go Home</Link>
       </Button>
     </div>

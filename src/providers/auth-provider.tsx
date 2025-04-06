@@ -1,23 +1,20 @@
-import {
-  createContext,
-  useEffect,
-  useMemo,
-  useState,
-} from 'react';
+import { createContext, useEffect, useMemo, useState } from 'react';
 import { createStore, StoreApi } from 'zustand';
 
-import {
-  Auth,
-  defaultUser,
-  type User,
-  type AuthType,
-} from '@/services/auth';
+import { Auth } from '@/services/auth';
+import type { TUser } from '@/interfaces/user';
 
-const AuthContext =
-  createContext<StoreApi<AuthType> | null>(null);
+interface TAuth {
+  isAuthenticated: boolean;
+  user: TUser;
+  clear: (cb?: () => void) => void;
+  set: (token: string, cb?: () => void) => void;
+}
+
+const AuthContext = createContext<StoreApi<TAuth> | null>(null);
 
 interface AuthProviderProps {
-  initialUser: User;
+  initialUser: TUser;
   children: React.ReactNode;
 }
 
@@ -26,7 +23,7 @@ const AuthProvider: React.FC<AuthProviderProps> = ({
   initialUser,
 }) => {
   const [store] = useState(() =>
-    createStore<AuthType>((setState) => ({
+    createStore<TAuth>((setState) => ({
       isAuthenticated: initialUser.isAuthenticated,
       user: initialUser,
 
@@ -35,7 +32,7 @@ const AuthProvider: React.FC<AuthProviderProps> = ({
           .then(() => {
             setState({
               isAuthenticated: false,
-              user: defaultUser,
+              user: Auth.defaultUser,
             });
 
             if (cb) {
@@ -79,10 +76,7 @@ const AuthProvider: React.FC<AuthProviderProps> = ({
     };
 
     // check auth every 1 minute
-    const checkAuthInterval = setInterval(
-      checkAuth,
-      1000 * 60 * 1
-    );
+    const checkAuthInterval = setInterval(checkAuth, 1000 * 60 * 1);
 
     return () => clearInterval(checkAuthInterval);
   }, [clear]);

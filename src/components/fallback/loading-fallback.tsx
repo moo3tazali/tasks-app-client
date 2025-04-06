@@ -10,10 +10,9 @@ export const LoadingFallback = ({
     <div
       {...props}
       className={cn(
-        'flex h-full w-full items-center justify-center',
+        'flex p-10 items-center justify-center',
         className
-      )}
-    >
+      )}>
       <LoaderCircle className='animate-spin size-1/6' />
     </div>
   );

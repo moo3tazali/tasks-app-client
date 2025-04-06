@@ -1,12 +1,25 @@
 import axios, { AxiosError } from 'axios';
 
-import { ErrorRes } from '@/interfaces/api-res';
+import { Auth } from '@/services/auth';
+import { type ErrorRes } from '@/interfaces/api-res';
 
 const baseURL =
   (import.meta.env.VITE_API_BASE_URL as string) ?? '';
 
 const publicApi = axios.create({
   baseURL,
+});
+
+const authApi = axios.create({
+  baseURL,
+});
+
+authApi.interceptors.request.use(async (config) => {
+  const token = await Auth.getToken();
+  if (token) {
+    config.headers.Authorization = `Bearer ${token}`;
+  }
+  return config;
 });
 
 const handle = async <T>(
@@ -47,11 +60,10 @@ const handle = async <T>(
     throw {
       status: {
         code: 0,
-        message: `Unexpected Error: ${
+        message:
           error instanceof Error
             ? error.message
-            : 'Unknown error occurred'
-        }`,
+            : 'Unknown error occurred',
         error: true,
         validationsErrors: null,
       },
@@ -60,4 +72,4 @@ const handle = async <T>(
   }
 };
 
-export { publicApi, handle };
+export { publicApi, authApi, handle };

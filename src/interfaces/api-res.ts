@@ -19,3 +19,20 @@ export interface SuccessRes<T> {
   };
   data: T;
 }
+
+export interface PaginationRes<T> {
+  status: {
+    code: number;
+    message: string;
+    error: false;
+    validationsErrors: null;
+  };
+  data: {
+    items: T[];
+   meta: {
+    count: number;
+    skip: number;
+    limit: number;
+   }
+  };
+}

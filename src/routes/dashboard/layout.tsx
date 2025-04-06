@@ -9,7 +9,6 @@ import { ROUTES } from '@/router';
 import { AuthGuard } from '@/providers/auth-guard';
 import { DashboardSidebar } from './-components/dashboard-sidebar';
 import {
-  Card,
   SIDEBAR_COOKIE_NAME,
   SidebarInset,
   SidebarProvider,
@@ -32,12 +31,17 @@ export const Route = createFileRoute('/dashboard')({
     }
   },
   notFoundComponent: (data) => (
-    <NotFoundFallback data={data} to='/dashboard' />
+    <NotFoundFallback
+      data={data}
+      to={ROUTES.DASHBOARD.HOME}
+    />
   ),
 });
 
 function DashboardLayout() {
-  const [{ sidebar_state }] = useCookies([SIDEBAR_COOKIE_NAME]);
+  const [{ sidebar_state }] = useCookies([
+    SIDEBAR_COOKIE_NAME,
+  ]);
 
   return (
     <AuthGuard>
@@ -45,9 +49,9 @@ function DashboardLayout() {
         <DashboardSidebar />
         <SidebarInset>
           <DashboardHeader />
-          <Card className='flex-1 bg-white mb-2 me-2 p-2 md:p-4'>
+          <div className='flex-1 p-4 border-t'>
             <Outlet />
-          </Card>
+          </div>
         </SidebarInset>
       </SidebarProvider>
     </AuthGuard>

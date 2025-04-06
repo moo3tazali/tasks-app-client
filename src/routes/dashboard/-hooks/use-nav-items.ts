@@ -1,13 +1,14 @@
 import { useMemo } from 'react';
 import { useLocation } from '@tanstack/react-router';
-
 import {
   Calendar,
+  ClipboardList,
   Home,
   Inbox,
   Search,
   Settings,
 } from 'lucide-react';
+
 import { ROUTES } from '@/router';
 
 export const useNavItems = () => {
@@ -20,6 +21,12 @@ export const useNavItems = () => {
         url: ROUTES.DASHBOARD.HOME,
         icon: Home,
         isActive: pathname === ROUTES.DASHBOARD.HOME,
+      },
+      {
+        title: 'Boards',
+        url: ROUTES.DASHBOARD.BOARDS.HOME,
+        icon: ClipboardList,
+        isActive: pathname.includes(ROUTES.DASHBOARD.BOARDS.HOME),
       },
       {
         title: 'Inbox',

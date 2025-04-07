@@ -25,6 +25,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from '@/components/ui/tooltip';
+import { useCookies } from 'react-cookie';
 
 export const SIDEBAR_COOKIE_NAME = 'sidebar_state';
 const SIDEBAR_COOKIE_MAX_AGE = 60 * 60 * 24 * 7; // 1 week
@@ -71,6 +72,7 @@ function SidebarProvider({
   onOpenChange?: (open: boolean) => void;
 }) {
   const isMobile = useIsMobile();
+  const [, setCookie] = useCookies();
   const [openMobile, setOpenMobile] = React.useState(false);
 
   // This is the internal state of the sidebar.
@@ -88,9 +90,12 @@ function SidebarProvider({
       }
 
       // This sets the cookie to keep the sidebar state.
-      document.cookie = `${SIDEBAR_COOKIE_NAME}=${openState}; path=/; max-age=${SIDEBAR_COOKIE_MAX_AGE}`;
+      setCookie(SIDEBAR_COOKIE_NAME, openState, {
+        path: '/',
+        maxAge: SIDEBAR_COOKIE_MAX_AGE,
+      });
     },
-    [setOpenProp, open]
+    [setOpenProp, open, setCookie]
   );
 
   // Helper to toggle the sidebar.

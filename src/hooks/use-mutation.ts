@@ -23,7 +23,7 @@ interface Props<
     'onError'
   > {
   operationName: string;
-  refetchQueries?: unknown[];
+  refetchQueries?: unknown[][];
   formControl?: Control<TFieldValues>;
   toastMsgs?: {
     loading?: string;
@@ -92,8 +92,8 @@ export const useMutation = <
 
       // refetch queries
       if (refetchQueries) {
-        queryClient.refetchQueries({
-          queryKey: refetchQueries,
+        refetchQueries.forEach((queryKey) => {
+          queryClient.refetchQueries({ queryKey });
         });
       }
 

@@ -1,51 +1,67 @@
-import { Suspense } from 'react';
 import { createFileRoute } from '@tanstack/react-router';
-import { useSuspenseQuery } from '@tanstack/react-query';
-import { ErrorBoundary } from 'react-error-boundary';
+import { useQuery } from '@tanstack/react-query';
 
-import {
-  ErrorFallback,
-  LoadingFallback,
-} from '@/components/fallback';
 import { Board } from '@/services/boards';
-import { useInvalidate } from '@/hooks/use-invalidate';
+import { ColumnDef, DataTable } from '@/components';
+import { TBoard } from '@/interfaces/board';
+import { CreatBoardModal } from './-components/create-board-modal';
+import { Button } from '@/components/ui';
 
 export const Route = createFileRoute('/dashboard/boards/')({
   component: Boards,
 });
 
 function Boards() {
-  const { invalidate } = useInvalidate({
-    queryKey: [Board.queryKey],
-  });
-
   return (
-    <div>
-      <button>Create Board</button>
+    <div className='space-y-5'>
+      <CreatBoardModal>
+        <Button
+          className='flex ms-auto font-bold'
+          size='lg'
+        >
+          Create Board
+        </Button>
+      </CreatBoardModal>
 
-      <ErrorBoundary
-        FallbackComponent={ErrorFallback}
-        onReset={invalidate}>
-        <Suspense fallback={<LoadingFallback />}>
-          <BoardList />
-        </Suspense>
-      </ErrorBoundary>
+      <BoardList />
     </div>
   );
 }
 
+const columns: ColumnDef<TBoard>[] = [
+  {
+    accessorKey: 'title',
+    header: 'Title',
+  },
+  {
+    accessorKey: 'description',
+    header: 'Description',
+  },
+  {
+    accessorKey: 'createdAt',
+    header: 'Created At',
+    cell: ({ row }) => {
+      const value = row.getValue('createdAt') as string;
+      return new Date(value).toLocaleString();
+    },
+  },
+  {
+    accessorKey: 'isArchived',
+    header: 'Archived',
+  },
+];
+
 const BoardList = () => {
-  const { data } = useSuspenseQuery(
+  const { data, isPending, error } = useQuery(
     Board.listQueryOptions()
   );
+
   return (
-    <div>
-      {data.data.items.map((board) => (
-        <div key={board.id}>
-          <h2>{board.title}</h2>
-          <p>{board.description}</p>
-        </div>
-      ))}
-    </div>
+    <DataTable
+      data={data?.data?.items || []}
+      columns={columns}
+      isPending={isPending}
+      error={error}
+    />
   );
 };

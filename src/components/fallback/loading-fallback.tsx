@@ -13,7 +13,7 @@ export const LoadingFallback = ({
         'flex p-10 items-center justify-center',
         className
       )}>
-      <LoaderCircle className='animate-spin size-1/6' />
+      <LoaderCircle className='animate-spin size-40' />
     </div>
   );
 };

@@ -38,5 +38,14 @@ const BoardList = () => {
   const { data } = useSuspenseQuery(
     Board.listQueryOptions()
   );
-  return <div>Board List</div>;
+  return (
+    <div>
+      {data.data.items.map((board) => (
+        <div key={board.id}>
+          <h2>{board.title}</h2>
+          <p>{board.description}</p>
+        </div>
+      ))}
+    </div>
+  );
 };

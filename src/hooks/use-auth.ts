@@ -1,11 +1,13 @@
 import { useContext } from 'react';
 
-import { AuthContext } from '@/providers/auth-provider';
-import { AuthType } from '@/services/auth';
+import {
+  AuthContext,
+  TAuth,
+} from '@/providers/auth-provider';
 import { useStore } from 'zustand';
 
 export const useAuth = <T>(
-  selector: (state: AuthType) => T
+  selector: (state: TAuth) => T
 ) => {
   const context = useContext(AuthContext);
 

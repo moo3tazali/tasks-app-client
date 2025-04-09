@@ -36,7 +36,8 @@ export function DashboardSidebar() {
                 <SidebarMenuItem key={item.title}>
                   <SidebarMenuButton
                     asChild
-                    isActive={item.isActive}>
+                    isActive={item.isActive}
+                  >
                     <Link to={item.url}>
                       <item.icon />
 

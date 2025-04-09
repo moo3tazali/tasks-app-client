@@ -1,9 +1,12 @@
 import toast from 'react-hot-toast';
 
 import { useAuth } from '@/hooks/use-auth';
+import { useServices } from './use-services';
 
 export const useLogout = () => {
-  const clear = useAuth((s) => s.clear);
+  const reset = useAuth((s) => s.reset);
+
+  const { authService } = useServices();
 
   const onLogout = async () => {
     const loading = toast.loading('Logging out...');
@@ -13,10 +16,10 @@ export const useLogout = () => {
       setTimeout(resolve, 1000)
     );
 
-    clear(() => {
-      toast.dismiss(loading);
-      toast.success('You have been logged out');
-    });
+    await authService.logout();
+    reset();
+    toast.dismiss(loading);
+    toast.success('You have been logged out');
   };
 
   return { onLogout };

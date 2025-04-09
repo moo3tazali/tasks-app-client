@@ -1,51 +1,37 @@
-import { buildUrl } from '@/lib/utils';
-import { authApi, handle } from '@/lib/axios';
-import type { TBoard } from '@/interfaces/board';
-import type { TFilter } from '@/interfaces/filter';
-import type {
-  PaginationRes,
-  SuccessRes,
-} from '@/interfaces/api-res';
 import { queryOptions } from '@tanstack/react-query';
 
-export class Board {
-  private static readonly id = ':boardId';
+import type { TBoard } from '@/interfaces/board';
+import type { TFilter } from '@/interfaces/filter';
+import type { PaginationRes } from '@/interfaces/api-res';
+import { AxiosService, ApiService } from '@/services';
+
+export class BoardService {
   public static readonly queryKey = 'boards';
-  public static readonly listUrl = '/boards/list';
-  public static readonly boardUrl = `/boards/${Board.id}`;
-  public static readonly createUrl = '/boards';
-  public static readonly updateUrl = `/boards/${Board.id}`;
-  public static readonly deleteUrl = `/boards/${Board.id}`;
 
   public static async create(data: {
     title: string;
     description: string;
-  }): Promise<SuccessRes<TBoard>> {
-    return handle(() =>
-      authApi.post(Board.createUrl, data)
-    );
+  }): Promise<TBoard> {
+    const url = ApiService.getUrl('createBoard');
+    return AxiosService.authPost(url, data);
   }
 
   public static async list(
     filters?: TFilter
   ): Promise<PaginationRes<TBoard>> {
-    const url = buildUrl({
-      url: Board.listUrl,
+    const url = ApiService.getUrl('boardList', {
       query: filters,
     });
-
-    return handle(() => authApi.get(url));
+    return AxiosService.authGet(url);
   }
 
   public static async get(
     boardId: string
-  ): Promise<SuccessRes<TBoard>> {
-    const url = buildUrl({
-      url: Board.boardUrl,
+  ): Promise<TBoard> {
+    const url = ApiService.getUrl('board', {
       params: { boardId },
     });
-
-    return handle(() => authApi.get(url));
+    return AxiosService.authGet(url);
   }
 
   public static async update(
@@ -54,37 +40,34 @@ export class Board {
       title?: string;
       description?: string;
     }
-  ): Promise<SuccessRes<TBoard>> {
-    const url = buildUrl({
-      url: Board.updateUrl,
+  ): Promise<TBoard> {
+    const url = ApiService.getUrl('updateBoard', {
       params: { boardId },
     });
-
-    return handle(() => authApi.patch(url, data));
+    return AxiosService.authPatch(url, data);
   }
 
   public static async delete(
     boardId: string
-  ): Promise<SuccessRes<TBoard>> {
-    const url = buildUrl({
-      url: Board.deleteUrl,
+  ): Promise<void> {
+    const url = ApiService.getUrl('deleteBoard', {
       params: { boardId },
     });
 
-    return handle(() => authApi.delete(url));
+    await AxiosService.authDelete(url);
   }
 
   public static listQueryOptions(filters?: TFilter) {
     return queryOptions({
-      queryKey: [Board.queryKey, filters ?? {}],
-      queryFn: () => Board.list(filters),
+      queryKey: [this.queryKey, filters ?? {}],
+      queryFn: () => this.list(filters),
     });
   }
 
   public static queryOptions(boardId: string) {
     return queryOptions({
-      queryKey: [Board.queryKey, { boardId }],
-      queryFn: () => Board.get(boardId),
+      queryKey: [this.queryKey, { boardId }],
+      queryFn: () => this.get(boardId),
     });
   }
 }

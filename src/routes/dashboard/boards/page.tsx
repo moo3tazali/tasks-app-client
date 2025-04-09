@@ -1,11 +1,11 @@
 import { createFileRoute } from '@tanstack/react-router';
 import { useQuery } from '@tanstack/react-query';
 
-import { Board } from '@/services/boards';
 import { ColumnDef, DataTable } from '@/components';
 import { TBoard } from '@/interfaces/board';
 import { CreatBoardModal } from './-components/create-board-modal';
 import { Button } from '@/components/ui';
+import { useServices } from '@/hooks';
 
 export const Route = createFileRoute('/dashboard/boards/')({
   component: Boards,
@@ -52,13 +52,15 @@ const columns: ColumnDef<TBoard>[] = [
 ];
 
 const BoardList = () => {
+  const { boardService } = useServices();
+
   const { data, isPending, error } = useQuery(
-    Board.listQueryOptions()
+    boardService.listQueryOptions()
   );
 
   return (
     <DataTable
-      data={data?.data?.items || []}
+      data={data?.items || []}
       columns={columns}
       isPending={isPending}
       error={error}

@@ -5,18 +5,19 @@ import {
 import { TanStackRouterDevtools } from '@tanstack/react-router-devtools';
 import type { QueryClient } from '@tanstack/react-query';
 
-import type { TUser } from '@/interfaces/user';
+import { TAuth } from '@/providers/auth-provider';
 import { NotFoundFallback } from '@/components/fallback';
 
 interface MyRouterContext {
-  auth: TUser;
+  auth: TAuth;
   queryClient: QueryClient;
 }
 
-export const Route = createRootRouteWithContext<MyRouterContext>()({
-  component: Routes,
-  notFoundComponent: NotFoundFallback,
-});
+export const Route =
+  createRootRouteWithContext<MyRouterContext>()({
+    component: Routes,
+    notFoundComponent: NotFoundFallback,
+  });
 
 function Routes() {
   return (

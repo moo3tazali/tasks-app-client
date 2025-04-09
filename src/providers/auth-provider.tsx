@@ -1,85 +1,77 @@
-import { createContext, useEffect, useMemo, useState } from 'react';
+import {
+  createContext,
+  use,
+  useEffect,
+  useState,
+} from 'react';
 import { createStore, StoreApi } from 'zustand';
 
-import { Auth } from '@/services/auth';
-import type { TUser } from '@/interfaces/user';
+import { useServices } from '@/hooks';
+import type { UserPayload } from '@/interfaces/user';
 
-interface TAuth {
+export type TAuth = {
   isAuthenticated: boolean;
-  user: TUser;
-  clear: (cb?: () => void) => void;
-  set: (token: string, cb?: () => void) => void;
-}
+  user: UserPayload | null;
+  reset: () => void;
+  set: (user: UserPayload) => void;
+};
 
-const AuthContext = createContext<StoreApi<TAuth> | null>(null);
+const AuthContext = createContext<StoreApi<TAuth> | null>(
+  null
+);
 
 interface AuthProviderProps {
-  initialUser: TUser;
   children: React.ReactNode;
+  userPromise: Promise<UserPayload | null>;
 }
 
 const AuthProvider: React.FC<AuthProviderProps> = ({
   children,
-  initialUser,
+  userPromise,
 }) => {
+  const user = use(userPromise);
+
   const [store] = useState(() =>
     createStore<TAuth>((setState) => ({
-      isAuthenticated: initialUser.isAuthenticated,
-      user: initialUser,
-
-      clear: (cb) => {
-        Auth.clearToken()
-          .then(() => {
-            setState({
-              isAuthenticated: false,
-              user: Auth.defaultUser,
-            });
-
-            if (cb) {
-              cb();
-            }
-          })
-          .catch(console.error);
-      },
-
-      set(token, cb) {
-        Auth.setToken(token)
-          .then(() => {
-            return Auth.getUser();
-          })
-          .then((user) => {
-            setState({
-              isAuthenticated: user.isAuthenticated,
-              user,
-            });
-            if (cb) {
-              cb();
-            }
-          })
-          .catch(console.error);
+      isAuthenticated: !!user,
+      user,
+      reset: () =>
+        setState({
+          isAuthenticated: false,
+          user: null,
+        }),
+      set: (user) => {
+        setState({
+          isAuthenticated: true,
+          user,
+        });
       },
     }))
   );
 
-  const clear = useMemo(
-    () => store.subscribe((s) => s.clear),
-    [store]
-  );
+  const { userService } = useServices();
 
   useEffect(() => {
     const checkAuth = async () => {
-      const isAuthenticated = await Auth.isAuthenticated();
+      const isAuthenticated =
+        await userService.isAuthenticated();
 
       if (isAuthenticated) return;
 
-      clear();
+      store.setState({
+        isAuthenticated: false,
+        user: null,
+      });
     };
 
     // check auth every 1 minute
-    const checkAuthInterval = setInterval(checkAuth, 1000 * 60 * 1);
+    const checkAuthInterval = setInterval(
+      checkAuth,
+      1000 * 60 * 1
+    );
 
     return () => clearInterval(checkAuthInterval);
-  }, [clear]);
+  }, [store, userService]);
 
   return (
     <AuthContext.Provider value={store}>

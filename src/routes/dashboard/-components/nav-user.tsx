@@ -32,11 +32,13 @@ export function NavUser({
     username: string;
     email: string;
     avatarPath: string;
-  };
+  } | null;
 }) {
   const { isMobile } = useSidebar();
 
-  const fallback = user.username.slice(0, 2).toUpperCase();
+  const fallback = user?.username
+    ?.slice(0, 2)
+    ?.toUpperCase();
 
   return (
     <SidebarMenu>
@@ -49,8 +51,8 @@ export function NavUser({
             >
               <Avatar className='h-8 w-8 rounded-lg'>
                 <AvatarImage
-                  src={user.avatarPath}
-                  alt={user.username}
+                  src={user?.avatarPath}
+                  alt={user?.username}
                 />
                 <AvatarFallback className='rounded-lg'>
                   {fallback}
@@ -58,10 +60,10 @@ export function NavUser({
               </Avatar>
               <div className='grid flex-1 text-left text-sm leading-tight'>
                 <span className='truncate font-semibold'>
-                  {user.username}
+                  {user?.username}
                 </span>
                 <span className='truncate text-xs'>
-                  {user.email}
+                  {user?.email}
                 </span>
               </div>
               <ChevronsUpDown className='ml-auto size-4' />
@@ -77,8 +79,8 @@ export function NavUser({
               <div className='flex items-center gap-2 px-1 py-1.5 text-left text-sm'>
                 <Avatar className='h-8 w-8 rounded-lg'>
                   <AvatarImage
-                    src={user.avatarPath}
-                    alt={user.username}
+                    src={user?.avatarPath}
+                    alt={user?.username}
                   />
                   <AvatarFallback className='rounded-lg'>
                     {fallback}
@@ -86,10 +88,10 @@ export function NavUser({
                 </Avatar>
                 <div className='grid flex-1 text-left text-sm leading-tight'>
                   <span className='truncate font-semibold'>
-                    {user.username}
+                    {user?.username}
                   </span>
                   <span className='truncate text-xs'>
-                    {user.email}
+                    {user?.email}
                   </span>
                 </div>
               </div>

@@ -3,9 +3,8 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useNavigate } from '@tanstack/react-router';
 
-import { Auth } from '@/services/auth';
 import { useMutation } from '@/hooks/use-mutation';
-import { useAuth } from '@/hooks/use-auth';
+import { useAuth, useServices } from '@/hooks';
 
 const formSchema = z.object({
   username: z
@@ -39,21 +38,22 @@ export const useRegister = () => {
     },
   });
 
-  const set = useAuth((s) => s.set);
+  const setUser = useAuth((s) => s.set);
+
+  const { authService } = useServices();
 
   const navigate = useNavigate();
 
   const { mutate: signUp, isPending } = useMutation({
     operationName: 'register',
-    mutationFn: Auth.register,
+    mutationFn: authService.register,
     formControl: form.control,
-    onSuccess: async (res) => {
-      const accessToken = res.data.accessToken;
-      set(accessToken, () => {
-        navigate({
-          to: '/dashboard',
-          replace: true,
-        });
+    onSuccess: (user) => {
+      setUser(user);
+
+      navigate({
+        to: '/dashboard',
+        replace: true,
       });
     },
   });

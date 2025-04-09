@@ -17,13 +17,12 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import { ErrorRes } from '@/interfaces/api-res';
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
   isPending?: boolean;
-  error?: Error | ErrorRes | null;
+  error?: Error | null;
   header?: React.ReactNode;
   footer?: React.ReactNode;
 }
@@ -51,9 +50,7 @@ function DataTable<TData, TValue>({
     }
 
     if (error) {
-      return error instanceof Error
-        ? error.message
-        : error.status.message;
+      return error.message;
     }
 
     return 'No results.';

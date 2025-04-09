@@ -2,55 +2,92 @@ import fs from 'fs';
 import path from 'path';
 import { Plugin } from 'vite';
 
+const includedDirs = [
+  'components',
+  'services',
+  'utils',
+  'hooks',
+  'interfaces',
+];
+
 const generateIndexFile = (dir: string) => {
-  const files = fs
-    .readdirSync(dir)
+  const entries = fs.readdirSync(dir, {
+    withFileTypes: true,
+  });
+
+  const directFiles = entries
     .filter(
-      (file) => file.endsWith('.tsx') && file !== 'index.ts'
+      (entry) =>
+        entry.isFile() &&
+        (entry.name.endsWith('.ts') ||
+          entry.name.endsWith('.tsx')) &&
+        entry.name !== 'index.ts'
+    )
+    .map(
+      (entry) =>
+        `export * from './${entry.name.replace(
+          /\.tsx?$/,
+          ''
+        )}';`
     );
 
-  const exports = files
-    .map(
-      (file) =>
-        `export * from './${file.replace('.tsx', '')}';`
-    )
-    .join('\n');
+  const subfolderIndexes = entries
+    .filter((entry) => entry.isDirectory())
+    .map((entry) => path.join(dir, entry.name, 'index.ts'))
+    .filter((indexPath) => fs.existsSync(indexPath))
+    .map((indexPath) => {
+      const subfolderName = path.basename(
+        path.dirname(indexPath)
+      );
+      return `export * from './${subfolderName}';`;
+    });
 
-  if (exports) {
+  const allExports = [
+    ...directFiles,
+    ...subfolderIndexes,
+  ].join('\n');
+
+  if (allExports) {
     fs.writeFileSync(
       path.join(dir, 'index.ts'),
-      exports + '\n',
+      allExports + '\n',
       'utf8'
     );
   }
 };
 
-const scanFolders = (baseDir: string) => {
-  fs.readdirSync(baseDir, { withFileTypes: true }).forEach(
-    (dir) => {
-      if (dir.isDirectory()) {
-        generateIndexFile(path.join(baseDir, dir.name));
-      }
+const scanFolders = () => {
+  const srcDir = path.resolve('src');
+  includedDirs.forEach((folderName) => {
+    const fullPath = path.join(srcDir, folderName);
+    if (fs.existsSync(fullPath)) {
+      generateIndexFile(fullPath);
     }
-  );
+  });
 };
 
 export function VitePluginGenerateExports(): Plugin {
   return {
     name: 'vite-plugin-generate-exports',
-    apply: 'serve', // يعمل فقط أثناء التطوير
+    apply: 'serve',
     buildStart() {
-      const componentsDir = path.resolve('src/components');
-      if (fs.existsSync(componentsDir)) {
-        scanFolders(componentsDir);
-      }
+      scanFolders();
     },
     handleHotUpdate({ file }) {
+      const srcPath = path.resolve('src');
+
       if (
-        file.endsWith('.tsx') &&
-        file.includes('/src/components/')
+        (file.endsWith('.tsx') || file.endsWith('.ts')) &&
+        file.startsWith(srcPath)
       ) {
-        generateIndexFile(path.dirname(file));
+        const relativePath = path.relative(srcPath, file);
+        const parts = relativePath.split(path.sep);
+        const topFolder = parts[0];
+
+        if (includedDirs.includes(topFolder)) {
+          const folderPath = path.join(srcPath, topFolder);
+          generateIndexFile(folderPath);
+        }
       }
     },
   };

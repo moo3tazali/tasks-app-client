@@ -7,9 +7,8 @@ import {
   useRouter,
 } from '@tanstack/react-router';
 
-import { Auth } from '@/services/auth';
 import { useMutation } from '@/hooks/use-mutation';
-import { useAuth } from '@/hooks/use-auth';
+import { useAuth, useServices } from '@/hooks';
 
 const formSchema = z.object({
   identifier: z
@@ -29,7 +28,9 @@ export const useLogin = () => {
     },
   });
 
-  const set = useAuth((s) => s.set);
+  const setUser = useAuth((s) => s.set);
+
+  const { authService } = useServices();
 
   const navigate = useNavigate();
 
@@ -42,19 +43,18 @@ export const useLogin = () => {
 
   const { mutate: login, isPending } = useMutation({
     operationName: 'login',
-    mutationFn: Auth.login,
+    mutationFn: authService.login,
     formControl: form.control,
-    onSuccess: async (res) => {
-      const accessToken = res.data.accessToken;
-      set(accessToken, () => {
-        if (redirect) {
-          return router.history.push(redirect);
-        }
+    onSuccess: (user) => {
+      setUser(user);
 
-        navigate({
-          to: '/dashboard',
-          replace: true,
-        });
+      if (redirect) {
+        return router.history.push(redirect);
+      }
+
+      navigate({
+        to: '/dashboard',
+        replace: true,
       });
     },
   });

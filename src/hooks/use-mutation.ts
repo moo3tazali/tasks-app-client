@@ -32,7 +32,7 @@ interface Props<
   };
   mutationFn: MutationFunction<TData, TVariables>;
   onError?: (
-    error: ErrorRes,
+    error: ErrorRes['status'],
     variables: TVariables,
     context: unknown
   ) => Promise<unknown> | unknown;
@@ -102,7 +102,11 @@ export const useMutation = <
         onSuccess(data, variables, context);
       }
     },
-    onError: (error: ErrorRes, variables, context) => {
+    onError: (
+      error: ErrorRes['status'],
+      variables,
+      context
+    ) => {
       // remove loading toast
       if (loadingRef.current) {
         toast.dismiss(loadingRef.current);
@@ -111,7 +115,7 @@ export const useMutation = <
       // show error toast
       toast.error(
         toastMsgs?.error ??
-          error.status.message ??
+          error.message ??
           `${operation} failed!`
       );
 
@@ -120,22 +124,22 @@ export const useMutation = <
         // set root error
         formControl.setError('root', {
           type: 'manual',
-          message: error.status.message,
+          message: error.message,
         });
 
         // set field errors
-        if (error.status.validationsErrors) {
-          Object.entries(
-            error.status.validationsErrors
-          ).forEach(([key, value]) => {
-            formControl.setError(
-              key as Path<TFieldValues>,
-              {
-                type: 'manual',
-                message: value.join(', '),
-              }
-            );
-          });
+        if (error.validationsErrors) {
+          Object.entries(error.validationsErrors).forEach(
+            ([key, value]) => {
+              formControl.setError(
+                key as Path<TFieldValues>,
+                {
+                  type: 'manual',
+                  message: value.join(', '),
+                }
+              );
+            }
+          );
         }
       }
 

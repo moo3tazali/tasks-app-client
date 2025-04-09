@@ -2,7 +2,7 @@ import { z } from 'zod';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useMutation } from '@/hooks/use-mutation';
-import { Board } from '@/services/boards';
+import { useServices } from '@/hooks';
 
 const formSchema = z.object({
   title: z
@@ -31,10 +31,12 @@ export const useCreateBoard = ({
     },
   });
 
+  const { boardService } = useServices();
+
   const { mutateAsync, isPending } = useMutation({
     operationName: 'Create Board',
-    mutationFn: Board.create,
-    refetchQueries: [[Board.queryKey]],
+    mutationFn: boardService.create,
+    refetchQueries: [[boardService.queryKey]],
     formControl: form.control,
     onSuccess: () => {
       closeModal();

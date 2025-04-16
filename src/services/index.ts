@@ -1,7 +1,11 @@
-export * from './api';
-export * from './auth';
-export * from './axios';
-export * from './boards';
-export * from './config';
-export * from './token';
-export * from './user';
+import { Auth } from './auth';
+import { User } from './user';
+import { Board } from './board';
+
+export const services = {
+  authService: Auth.getInstance(),
+  userService: User.getInstance(),
+  boardService: Board.getInstance(),
+} as const;
+
+export type TServices = typeof services;

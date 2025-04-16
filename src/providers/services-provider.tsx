@@ -1,13 +1,12 @@
 import React, { createContext } from 'react';
-import { Services } from '.';
 
-const ServicesContext = createContext<Services | null>(
-  null
-);
+import { TServices } from '@/services';
+
+const ServicesContext = createContext<TServices | null>(null);
 
 const ServicesProvider: React.FC<{
   children: React.ReactNode;
-  services: Services;
+  services: TServices;
 }> = ({ children, services }) => {
   return (
     <ServicesContext.Provider value={services}>

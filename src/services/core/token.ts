@@ -1,37 +1,48 @@
 import Dexie from 'dexie';
 import { EncryptJWT, jwtDecrypt, decodeJwt } from 'jose';
 
+import { Env, ENV } from './env';
 import { UserPayload } from '@/interfaces';
-import { ConfigService } from '@/services';
 
-const db = new Dexie('TasksDB');
-db.version(1).stores({
-  tokens: 'id, value',
-});
+export class Token {
+  private static _instance: Token;
+  private readonly _db: Dexie;
+  private readonly _env: Env = Env.getInstance();
+  private readonly _tableName = 'tokens';
+  private readonly _tokenId = 'authToken';
 
-export class TokenService {
-  private static readonly tableName = 'tokens';
-  private static readonly tokenId = 'authToken';
+  private constructor() {
+    this._db = new Dexie('TasksDB');
+    this._db.version(1).stores({
+      tokens: 'id, value',
+    });
+  }
+
+  // singleton pattern
+  public static getInstance(): Token {
+    if (!Token._instance) {
+      Token._instance = new Token();
+    }
+    return Token._instance;
+  }
 
   // save encrypted token to indexedDB
-  public static async setToken(token: string) {
+  public async setToken(token: string) {
     try {
       const signedToken = await this.encryptToken(token);
-      await db
-        .table(this.tableName)
-        .put({ id: this.tokenId, value: signedToken });
+      await this._db
+        .table(this._tableName)
+        .put({ id: this._tokenId, value: signedToken });
     } catch (error) {
       console.error('Error saving token', error);
     }
   }
 
   // get decrypted token from indexedDB
-  public static async getToken(): Promise<
-    string | undefined
-  > {
+  public async getToken(): Promise<string | undefined> {
     try {
       const encryptedToken = (
-        await db.table(this.tableName).get(this.tokenId)
+        await this._db.table(this._tableName).get(this._tokenId)
       )?.value as string | undefined;
 
       if (!encryptedToken) return;
@@ -43,18 +54,21 @@ export class TokenService {
   }
 
   // delete token from indexedDB
-  public static async clearToken(): Promise<void> {
+  public async clearToken(): Promise<void> {
     try {
-      await db.table(this.tableName).delete(this.tokenId);
+      await this._db
+        .table(this._tableName)
+        .delete(this._tokenId);
     } catch (error) {
       console.error('Error clearing token', error);
     }
   }
 
   // decode token to get user info payload
-  public static decodeToken(token: string): UserPayload {
+  public decodeToken(token: string): UserPayload {
     try {
       const payload = decodeJwt<UserPayload>(token);
+
       return {
         id: payload.sub ?? '',
         username: payload.username,
@@ -68,10 +82,8 @@ export class TokenService {
   }
 
   // private method to encrypt Token with secret key
-  private static async encryptToken(
-    token: string
-  ): Promise<string> {
-    const secretKey = ConfigService.get('secretKey');
+  private async encryptToken(token: string): Promise<string> {
+    const secretKey = this._env.get(ENV.SECRET_KEY);
 
     const secret = this.hexToBytes(secretKey);
 
@@ -90,10 +102,10 @@ export class TokenService {
   }
 
   // private method to decrypt Token with secret key
-  private static async decryptToken(
+  private async decryptToken(
     encryptedToken: string
   ): Promise<string> {
-    const secretKey = ConfigService.get('secretKey');
+    const secretKey = this._env.get(ENV.SECRET_KEY);
 
     const secret = this.hexToBytes(secretKey);
 
@@ -111,7 +123,7 @@ export class TokenService {
   }
 
   // private method to convert hex string to Uint8Array
-  private static hexToBytes(hex: string): Uint8Array {
+  private hexToBytes(hex: string): Uint8Array {
     const bytes = new Uint8Array(hex.length / 2);
     for (let i = 0; i < hex.length; i += 2) {
       bytes[i / 2] = parseInt(hex.substr(i, 2), 16);

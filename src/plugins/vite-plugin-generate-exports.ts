@@ -4,7 +4,6 @@ import { Plugin } from 'vite';
 
 const includedDirs = [
   'components',
-  'services',
   'utils',
   'hooks',
   'interfaces',
@@ -25,10 +24,7 @@ const generateIndexFile = (dir: string) => {
     )
     .map(
       (entry) =>
-        `export * from './${entry.name.replace(
-          /\.tsx?$/,
-          ''
-        )}';`
+        `export * from './${entry.name.replace(/\.tsx?$/, '')}';`
     );
 
   const subfolderIndexes = entries
@@ -42,10 +38,9 @@ const generateIndexFile = (dir: string) => {
       return `export * from './${subfolderName}';`;
     });
 
-  const allExports = [
-    ...directFiles,
-    ...subfolderIndexes,
-  ].join('\n');
+  const allExports = [...directFiles, ...subfolderIndexes].join(
+    '\n'
+  );
 
   if (allExports) {
     fs.writeFileSync(

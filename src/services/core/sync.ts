@@ -128,11 +128,9 @@ export class Sync {
         const token = await this._token.getToken();
 
         if (!token) {
-          return Promise.reject({
-            code: 401,
-            message: 'Unauthorized: Token is missing.',
-            error: true,
-          });
+          throw new Error(
+            'Failed to inject token, Token is missing!!'
+          );
         }
         config.headers.Authorization = `Bearer ${token}`;
         return config;

@@ -20,7 +20,9 @@ export class ErrorHandler {
   public throwError(error: unknown): never {
     const appError = this._handleError(error);
 
-    console.error('Error Thrown:', appError);
+    if (import.meta.env.DEV) {
+      console.error(appError);
+    }
 
     throw appError;
   }
